@@ -1,0 +1,26 @@
+default:
+ set log Phase Chat LCP IPCP CCP tun command
+ ident user-ppp VERSION
+ set device /dev/cuaU0
+ set speed 38400
+ set dial "ABORT BUSY TIMEOUT 5 \
+        \"\" \
+        ATZ0 OK-ATZ0-OK \
+        ATQ0 OK \
+        ATV1 OK \
+        ATE1 OK \
+        ATS0=0 OK \
+        AT&D2 OK \
+        AT+CGDCONT=2,\\\"IP\\\",\\\"iijmio.jp\\\" OK \
+        ATD*99***2# CONNECT"
+ set timeout 180
+ enable dns
+ disable ipv6
+
+iijmio:
+ set phone "*99***2#"
+ set authname "mio@iij"
+ set authkey "iij"
+ set timeout 300
+ set ifaddr 10.1.0.1/0 10.1.0.2/0 255.255.255.255 0.0.0.0
+ add default HISADDR
