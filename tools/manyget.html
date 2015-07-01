@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>many request</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+</head>
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript">
+function getvars(){
+    var vars = {}; 
+    var param = location.search.substring(1).split('&');
+    for(var i = 0; i < param.length; i++) {
+        var keySearch = param[i].search(/=/);
+        var key = '';
+        if(keySearch != -1){
+            key = param[i].slice(0, keySearch);
+        }
+        var val = param[i].slice(param[i].indexOf('=', 0) + 1);
+        if(key != ''){
+            vars[key] = decodeURI(val);
+        }
+    }
+
+    return vars; 
+}
+
+function init(){
+    var params = getvars();
+    var i;
+    var loopcount = 10;
+    var endless = false;
+
+    console.log("text_count is " + params["text_count"]);
+    console.log("chk_endless is " + params["chk_endless"]);
+
+    if(typeof params["text_count"] === "undefined"){
+        loopcount = 10;
+    }
+    else{
+       if(0 < params["text_count"]){
+           loopcount = params["text_count"];
+       }
+    }
+
+    if("on" == params["chk_endless"]){
+        endless = true;
+    }
+
+    console.log("loopcount is " + loopcount);
+    console.log("endless is " + endless);
+
+    for(i = 0; i < loopcount; i ++){
+        $.ajax({
+          type: "GET",
+          async: true,
+          cache : false,
+          url: "/test.jpg"
+        })
+        .done(function(data) {
+          console.log("done.");
+        })
+        .fail(function() {
+          console.log("Error!!");
+        })
+        .always(function(data) {
+          console.log("always!!");
+        });
+    }
+
+    if(endless){
+        location.reload(true);
+    }
+}
+</script>
+<body onload="init()">
+<div id="body">
+<form method="GET" action="#" name="form1">
+<h1>many get page.</h1>
+<p>count:<input type="text" name="text_count" value="10"></p>
+<p>endless:<input type="checkbox" name="chk_endless"></p>
+<input type="submit" value="start">
+</div>
+</body>
+</html>
