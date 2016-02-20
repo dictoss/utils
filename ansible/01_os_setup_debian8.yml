@@ -1,0 +1,21 @@
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: apt-get update
+      apt: update_cache=true
+    - name: install package
+      apt: name={{ item }} state=present
+      with_items:
+        - cron
+        - logrotate
+        - bsd-mailx
+        - vim
+        - less
+        - lv
+        - nkf
+        - screen
+        - curl
+        - wget
+        - zip
+        - unzip
+        - rsync

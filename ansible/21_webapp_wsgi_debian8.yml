@@ -1,0 +1,59 @@
+- hosts: webapp
+  sudo: yes
+  vars:
+    appname: appname1
+    apptar: appname1.tar.xz
+    appgeturldir: http://192.168.0.2/webapp
+    app_logdir: /var/log/appname1
+    wsgi_eggdir: /var/www/eggs
+    wsgi_appdir: /var/www/wsgi_apps
+    workdir: /tmp
+    httpd_user: www-data
+    httpd_group: www-data
+    httpd_confroot: /etc/apache2
+    httpd_name: apache2
+    packages:
+      - apache2
+      - apache2-mpm-worker
+      - python3
+      - python3-pip
+      - libapache2-mod-wsgi-py3
+      - libmysqlclient-dev
+    pippackages:
+      - { name: 'python-dateutil', version: '2.4.2' }
+      - { name: 'ws4py', version: '0.3.4' }
+      - { name: 'mysqlclient', version: '1.3.7' }
+      - { name: 'Django', version: '1.8.9' }
+  tasks:
+    - name: install webserver
+      apt: name={{ item }} state=installed
+      with_items: packages
+    - name: install python-lib
+      pip: name={{ item.name }} version={{ item.version }} state=present executable=pip3
+      with_items: pippackages
+    - name: remove webapp tar
+      file: path={{ workdir }}/{{ apptar }} state=absent force=yes
+    - name: fetch webapp tar
+      get_url: url={{ appgeturldir }}/{{ apptar }} dest={{ workdir }}
+    - name: create directory (wsgi)
+      file: path={{ wsgi_eggdir }} state=directory
+      file: path={{ wsgi_appdir }} state=directory
+    - name: create log directory
+      file: path={{ app_logdir }} state=directory
+    - name: deply webapp (extract tar)
+      unarchive: src={{ workdir }}/{{ apptar }} dest={{ wsgi_appdir }}/ copy=no
+    - name: adjast chown (wsgi)
+      file: path={{ eggdir }} owner={{ httpd_user }} group={{ httpd_group }} recurse=yes
+      file: path={{ wsgi_appdir }} owner={{ httpd_user }} group={{ httpd_group }} recurse=yes
+    - name: adjast chown (log)
+      file: path={{ app_logdir }} owner={{ httpd_user }} group={{ httpd_group }} recurse=yes
+    - name: deply index.html
+      command: cp -f "{{ wsgi_appdir }}/{{ appname }}/index.html" "/var/www/html/index.html"
+    - name: enable wsgimodule
+      command: a2enmod wsgi
+    - name: deploy apache2 config
+      command: cp -f "{{ wsgi_appdir }}/{{ appname }}/conf/apache2/wsgi_{{ appname }}.conf" "{{ httpd_confroot }}/conf-available/wsgi_{{ appname }}.conf"
+    - name: enable wsgi config
+      command: a2enconf wsgi_{{ appname }}.conf
+    - name: restart apache
+      service: name={{ httpd_name }} state=restarted

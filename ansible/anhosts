@@ -1,0 +1,15 @@
+[webapp]
+0.0.0.0
+
+[webappdb]
+0.0.0.0
+
+[webapp:vars]
+ansible_ssh_port=22
+ansible_ssh_user=admin
+ansible_ssh_private_key_file="~/.ssh/id_rsa.webapp"
+
+[webappdb:vars]
+ansible_ssh_port=22
+ansible_ssh_user=admin
+ansible_ssh_private_key_file="~/.ssh/id_rsa.webapp"

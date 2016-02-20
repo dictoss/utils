@@ -1,0 +1,8 @@
+- hosts: webappdb
+  sudo: yes
+  vars:
+  tasks:
+    - name: install database server
+      apt: name={{ item }} state=installed
+      with_items:
+        - mysql-server-5.5
