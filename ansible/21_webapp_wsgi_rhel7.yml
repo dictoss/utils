@@ -1,0 +1,72 @@
+- hosts: webapp
+  sudo: yes
+  vars:
+    appname: webapp
+    apptar: webapp.tar.xz
+    appgeturldir: http://127.0.0.1/webapp
+    app_logdir: /var/log/wwwapp
+    wsgi_eggdir: /var/www/eggs
+    wsgi_appdir: /var/www/wsgi_apps
+    workdir: /tmp
+    httpd_user: apache
+    httpd_group: apache
+    httpd_confroot: /etc/httpd
+    httpd_name: httpd
+    yumrepo_ius: https://dl.iuscommunity.org/pub/ius/stable/CentOS/7/x86_64/ius-release-1.0-14.ius.centos7.noarch.rpm
+    packages:
+      - epel-release
+      - gcc
+      - make
+      - httpd
+      - httpd-devel
+      - mariadb-devel
+    packages_ius:
+      - python34u
+      - python34u-devel
+      - python34u-setuptools
+      - python34u-pip
+    pippackages:
+      - { name: 'python-dateutil', version: '2.4.2' }
+      - { name: 'mysqlclient', version: '1.3.7' }
+      - { name: 'Django', version: '1.8.9' }
+      - { name: 'mod_wsgi', version: '4.4.22' }
+  tasks:
+    - name: check installed ius-repo
+      shell: rpm -qa ius-release
+      register: installed_ius
+    - name: add ius-repo
+      yum: name={{ yumrepo_ius }} state=installed
+      when: installed_ius.stdout.find('ius-release') == -1
+    - name: install webserver-base
+      yum: name={{ item }} state=installed
+      with_items: packages
+    - name: install webserver-ius
+      yum: name={{ item }} state=installed
+      with_items: packages_ius
+    - name: install python-lib
+      pip: name={{ item.name }} version={{ item.version }} state=present executable=pip3
+      with_items: pippackages
+    - name: remove webapp tar
+      file: path={{ workdir }}/{{ apptar }} state=absent force=yes
+    - name: fetch webapp tar
+      get_url: url={{ appgeturldir }}/{{ apptar }} dest={{ workdir }}
+    - name: create directory (wsgi)
+      file: path={{ wsgi_eggdir }} state=directory
+      file: path={{ wsgi_appdir }} state=directory
+    - name: create log directory
+      file: path={{ app_logdir }} state=directory
+    - name: deply webapp (extract tar)
+      unarchive: src={{ workdir }}/{{ apptar }} dest={{ wsgi_appdir }}/ copy=no
+    - name: adjast chown (wsgi)
+      file: path={{ eggdir }} owner={{ httpd_user }} group={{ httpd_group }} recurse=yes
+      file: path={{ wsgi_appdir }} owner={{ httpd_user }} group={{ httpd_group }} recurse=yes
+    - name: adjast chown (log)
+      file: path={{ app_logdir }} owner={{ httpd_user }} group={{ httpd_group }} recurse=yes
+    - name: deply index.html
+      command: cp -f "{{ wsgi_appdir }}/{{ appname }}/index.html" "/var/www/html/index.html"
+    - name: deploy apache2 config 1/2
+      command: cp -f "{{ wsgi_appdir }}/{{ appname }}/conf/apache2_rhel/mod_wsgi.conf" "{{ httpd_confroot }}/conf.d/"
+    - name: deploy apache2 config 2/2
+      command: cp -f "{{ wsgi_appdir }}/{{ appname }}/conf/apache2_rhel/wsgi_{{ appname }}.conf" "{{ httpd_confroot }}/conf.d/wsgi_{{ appname }}.conf"
+    - name: restart apache
+      service: name={{ httpd_name }} state=restarted

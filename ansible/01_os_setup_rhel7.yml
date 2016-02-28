@@ -1,0 +1,20 @@
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: disable selinux
+      selinux: state=disabled
+    - name: install package
+      yum: name={{ item }} update_cache=yes state=present
+      with_items:
+        - cronie
+        - cronie-anacron
+        - logrotate
+        - mailx
+        - vim-enhanced
+        - less
+        - screen
+        - curl
+        - wget
+        - zip
+        - unzip
+        - rsync

@@ -1,0 +1,8 @@
+- hosts: webappdb
+  sudo: yes
+  vars:
+  tasks:
+    - name: install database server
+      yum: name={{ item }} update_cache=yes state=installed
+      with_items:
+        - mariadb-server
