@@ -1,0 +1,7 @@
+mode server
+
+### tls config
+tls-server
+tls-version-min 1.0
+tls-cipher TLS-DHE-RSA-WITH-AES-128-GCM-SHA256:TLS-DHE-RSA-WITH-AES-128-CBC-SHA256:TLS-DHE-RSA-WITH-AES-128-CBC-SHA
+

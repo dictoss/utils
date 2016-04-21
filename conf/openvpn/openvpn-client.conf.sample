@@ -1,0 +1,18 @@
+client
+tls-client
+tls-version-min 1.2
+dev tun
+proto tcp
+tun-mtu 1400
+remote myvpnserver.com 443
+nobind
+ca /etc/openvpn/ca.crt
+cert /etc/openvpn/mycert.crt
+key /etc/openvpn/mycert.key
+tls-auth /etc/openvpn/ta.key 1
+log /var/log/openvpn.log
+log-append /var/log/openvpn.log
+comp-lzo
+persist-key
+persist-tun
+verb 3
