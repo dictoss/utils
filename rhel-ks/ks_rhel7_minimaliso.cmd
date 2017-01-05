@@ -1,0 +1,14 @@
+sudo virt-install \
+--name kvm-cent7ks-1 \
+--ram 1024 \
+--vcpus 1 \
+--disk path=/var/lib/libvirt/images/kvm-cent7ks-1.qcow2,format=qcow2,bus=virtio \
+--arch x86_64 \
+--os-type linux \
+--os-variant rhel7 \
+--network bridge=br0,model=e1000 \
+--nographics \
+--console pty,target_type=serial \
+--location /var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1611.iso \
+--initrd-inject /var/lib/libvirt/ks_rhel7_initrdinject.cfg \
+--extra-args="ks=file:/ks_rhel7_initrdinject.cfg console=ttyS0,115200" \

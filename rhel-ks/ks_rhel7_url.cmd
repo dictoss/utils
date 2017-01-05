@@ -1,0 +1,12 @@
+sudo virt-install \
+--name kvm-cent7ks-1 \
+--ram 1024 \
+--vcpus 1 \
+--disk path=/var/lib/libvirt/images/kvm-cent7ks-1.qcow2,format=qcow2,bus=virtio \
+--os-type linux \
+--os-variant rhel7 \
+--network bridge=br0,model=e1000 \
+--nographics \
+--console pty,target_type=serial \
+--location 'http://ftp.jaist.ac.jp/pub/Linux/CentOS/7/os/x86_64/' \
+--extra-args="ks=http://192.168.22.102/ks/ks_rhel7_url.cfg console=ttyS0,115200"
