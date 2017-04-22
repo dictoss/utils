@@ -26,13 +26,13 @@
 - cd snmptt-1.4
 - debuild -uc -us
 
-> Now running lintian...
-> W: snmptt source: changelog-should-mention-nmu
-> W: snmptt source: source-nmu-has-incorrect-version-number 1.4-1
-> W: snmptt source: ancient-standards-version 3.9.5 (current is 3.9.8)
-> E: snmptt: init.d-script-needs-depends-on-lsb-base etc/init.d/snmptt (line 31)
-> W: snmptt: binary-without-manpage usr/sbin/snmptt
-> W: snmptt: binary-without-manpage usr/sbin/snmpttconvert
-> W: snmptt: binary-without-manpage usr/sbin/snmpttconvertmib
-> W: snmptt: binary-without-manpage usr/sbin/snmptthandler
-> Finished running lintian.
+    Now running lintian...
+    W: snmptt source: changelog-should-mention-nmu
+    W: snmptt source: source-nmu-has-incorrect-version-number 1.4-1
+    W: snmptt source: ancient-standards-version 3.9.5 (current is 3.9.8)
+    E: snmptt: init.d-script-needs-depends-on-lsb-base etc/init.d/snmptt (line 31)
+    W: snmptt: binary-without-manpage usr/sbin/snmptt
+    W: snmptt: binary-without-manpage usr/sbin/snmpttconvert
+    W: snmptt: binary-without-manpage usr/sbin/snmpttconvertmib
+    W: snmptt: binary-without-manpage usr/sbin/snmptthandler
+    Finished running lintian.
