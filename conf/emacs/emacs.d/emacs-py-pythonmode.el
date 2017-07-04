@@ -1,6 +1,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
 ;;;;;;;;;;;;;;;;;;;;;;;;
-;; use flymake
-(load "~/.emacs.d/emacs-py-flymake.el")
+;(load "~/.emacs.d/emacs-py-mode.el")
 
