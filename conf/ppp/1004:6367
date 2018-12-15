@@ -1,0 +1,4 @@
+# LG L-03F LTE/3G
+TargetVendor=0x1004
+TargetProduct=0x6326
+StandardEject=1
