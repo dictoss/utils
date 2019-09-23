@@ -7,6 +7,12 @@
 #   # pip3 install python-redmine==2.2.1
 
 import sys
+import datetime
+from email.message import EmailMessage
+from email.parser import BytesParser
+from email.header import decode_header
+from email.utils import parsedate_tz
+
 from redminelib import Redmine
 
 
@@ -45,13 +51,97 @@ class MyRedmineApi(object):
         return self._rdm_project
 
     def create_issue(self, issue_data, rdm_project):
-        return True
+        _result = issue_data.save()
+        return _result
 
     def extract_issue_data_from_mail(self, mailfile):
-        _issue_data = {'id': 0}
+        _issue = self._rdm.issue.new()
+        _maildata = None
 
-        return _issue_data
+        # parse email
+        try:
+             _parser = BytesParser()
+             with open(mailfile, mode='br') as f:
+                _maildata = _parser.parse(f)
+        except Exception as e:
+            print('EXCEPT 1: {}'.format(e))
+            return None
 
+        #
+        # set issue
+        #
+        _issue.project_id = self._rdm_project.identifier
+
+        _issue.subject = self._get_mail_headler('Subject', _maildata)
+        _issue.description = self._get_mail_body(_maildata)
+
+        _issue.tracker_id = self._get_tracker_id(_maildata)
+        _issue.status_id = self._get_status_id(_maildata)
+        _issue.priority_id = self._get_priority_id(_maildata)
+
+        # no set
+        _issue.start_date = None
+        _issue.due_date = None
+        _issue.assigned_to_id = None
+        _issue.parent_issue_id = None
+        _issue.watcher_user_ids = []
+        _issue.estimated_hours = None
+        _issue.done_ratio = None
+        _issue.uploads = []
+
+        # at your own set.
+        _issue.custom_fields = []
+
+        return _issue
+
+    def _get_tracker_id(self, maildata):
+        return 1
+
+    def _get_status_id(self, maildata):
+        return 1
+
+    def _get_priority_id(self, maildata):
+        return 1
+
+    def _get_mail_headler(self, key, maildata):
+        _s = ''
+        _h = maildata.get(key)
+        _t = decode_header(_h)
+
+        for t in _t:
+            _charset = t[1]
+
+            if type(t[0]) is bytes:
+                if _charset:
+                    _s += t[0].decode(_charset)
+                else:
+                    _s += t[0].decode()
+            elif type(tup[0]) is str:
+                _s += t[0]
+            else:
+                pass
+
+        return _s
+
+    def _get_mail_body(self, maildata):
+        """
+        FIXME: support multipart
+        """
+        _charset = maildata.get_content_charset()
+        _payload = maildata.get_payload(decode=True)
+
+        try:
+            if _payload:
+                if _charset:
+                   _s = _payload.decode(_charset)
+                else:
+                   _s = _payload.decode()
+            else:
+                _s = ""
+        except:
+           return _payload
+
+        return _s
 
 
 def main(redmine_url, redmine_token, redmine_project_name, mailfilelist):
@@ -70,9 +160,13 @@ def main(redmine_url, redmine_token, redmine_project_name, mailfilelist):
         _issue_data = _redmine.extract_issue_data_from_mail(m)
         if _issue_data is not None:
             _result = _redmine.create_issue(_issue_data, _proj)
-            if _result is True:
-                print('SUCCESS create issue (project={}, id={})'.format(
-                    _proj.name, _issue_data['id']))
+            if _result:
+                print('SUCCESS create issue. (project={}, id={})'.format(
+                    _proj.identifier, _issue_data['id']))
+            else:
+                print('FAIL create issue ! (project={}, mailfile={})'.format(
+                    _proj.identifier, m))
+
 
     return 0
 
