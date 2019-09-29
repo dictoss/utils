@@ -45,7 +45,7 @@ class MyRedmineApi(object):
         try:
             self._rdm_project = self._rdm.project.get(target_name)
         except Exception as e:
-            print('EXCEPT: {}'.format(e))
+            print('EXCEPT: {}'.format(e), file=sys.stderr)
             return None
 
         return self._rdm_project
@@ -64,7 +64,7 @@ class MyRedmineApi(object):
              with open(mailfile, mode='br') as f:
                 _maildata = _parser.parse(f)
         except Exception as e:
-            print('EXCEPT 1: {}'.format(e))
+            print('EXCEPT 1: {}'.format(e), file=sys.stderr)
             return None
 
         #
@@ -158,7 +158,8 @@ class MyRedmineApi(object):
                        _s = _payload.decode()
                 else:
                     _s = ""
-        except:
+        except Exception as e:
+           print('EXCEPT 1: {}'.format(e), file=sys.stderr)
            return None
 
         return _s
@@ -172,17 +173,19 @@ def main(redmine_url, redmine_token, redmine_project_name, mailfilelist):
     try:
         _proj = _redmine.get_project()
     except Exception as e:
-        print('EXCEPT: {}'.format(e))
+        print('EXCEPT: {}'.format(e), file=sys.stderr)
         return 1
 
     # create issues from mailfile.
     for m in mailfilelist:
+        print('start mailfile: {}'.format(m))
+
         _issue_data = _redmine.extract_issue_data_from_mail(m)
         if _issue_data is not None:
             _result = _redmine.create_issue(_issue_data, _proj)
             if _result:
-                print('SUCCESS create issue. (project={}, id={})'.format(
-                    _proj.identifier, _issue_data['id']))
+                print('SUCCESS create issue. (project={}, id={}, mailfile={})'.format(
+                    _proj.identifier, _issue_data['id'], m))
             else:
                 print('FAIL create issue ! (project={}, mailfile={})'.format(
                     _proj.identifier, m))
