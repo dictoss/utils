@@ -123,6 +123,36 @@ class MyRedmineApi(object):
 
         return _s
 
+    def _get_mail_attachedfiles(self, maildata, exclude_html=True):
+        """
+        get mail attached files
+        return [dict{'filename': str, data: bytes}, ...]
+        """
+        _files = []
+
+        try:
+            if maildata.is_multipart:
+                for p in maildata.walk():
+                    _file = None
+
+                    _filename = p.get_filename()
+                    if _filename is None:
+                        continue
+
+                    _c_type = p.get_content_type()
+                    if (_c_type == 'text/html') and (exclude_html is True):
+                        continue
+
+                    _payload = p.get_payload(decode=True)
+                    if _payload:
+                        _file = {'filename': _filename, 'data': _payload}
+                        _files.append(_file)
+        except Exception as e:
+           print('EXCEPT 1: {}'.format(e), file=sys.stderr)
+           return None
+
+        return _files
+
     def _get_mail_body(self, maildata):
         """
         get mail body
