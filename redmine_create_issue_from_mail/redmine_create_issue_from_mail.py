@@ -125,21 +125,43 @@ class MyRedmineApi(object):
 
     def _get_mail_body(self, maildata):
         """
-        FIXME: support multipart
+        get mail body
         """
-        _charset = maildata.get_content_charset()
-        _payload = maildata.get_payload(decode=True)
+        _s = ''
 
         try:
-            if _payload:
-                if _charset:
-                   _s = _payload.decode(_charset)
-                else:
-                   _s = _payload.decode()
+            if maildata.is_multipart:
+                for p in maildata.walk():
+                    _c_type = p.get_content_type()
+                    if _c_type == 'text/html':
+                        continue
+
+                    _payload = p.get_payload(decode=True)
+                    _charset = p.get_content_charset()
+                    if _payload:
+                        if _charset:
+                            _s += _payload.decode(_charset)
+                        else:
+                            _s += _charset.decode()
+
+                        print("{} : {}".format(_charset, _s))
+                    else:
+                        _s += ""
+
             else:
-                _s = ""
+                _c_type = maildata.get_content_type()
+                _charset = maildata.get_content_charset()
+                _payload = maildata.get_payload(decode=True)
+
+                if _payload:
+                    if _charset:
+                      _s = _payload.decode(_charset)
+                    else:
+                       _s = _payload.decode()
+                else:
+                    _s = ""
         except:
-           return _payload
+           return None
 
         return _s
 
