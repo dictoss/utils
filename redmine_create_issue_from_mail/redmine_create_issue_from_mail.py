@@ -72,7 +72,7 @@ class MyRedmineApi(object):
         #
         _issue.project_id = self._rdm_project.identifier
 
-        _issue.subject = self._get_mail_headler('Subject', _maildata)
+        _issue.subject = self._get_mail_header('Subject', _maildata)
         _issue.description = self._get_mail_body(_maildata)
 
         _issue.tracker_id = self._get_tracker_id(_maildata)
@@ -103,7 +103,7 @@ class MyRedmineApi(object):
     def _get_priority_id(self, maildata):
         return 1
 
-    def _get_mail_headler(self, key, maildata):
+    def _get_mail_header(self, key, maildata):
         _s = ''
         _h = maildata.get(key)
         _t = decode_header(_h)
