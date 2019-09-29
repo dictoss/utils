@@ -135,10 +135,15 @@ class MyRedmineApi(object):
                     _c_type = p.get_content_type()
                     if _c_type == 'text/html':
                         continue
+                    elif _c_type == 'text/plain':
+                        #print('this part is text/plain')
+                        pass
 
                     _payload = p.get_payload(decode=True)
                     _charset = p.get_content_charset()
-                    if _payload:
+                    _filename = p.get_filename()
+
+                    if _payload and (_filename is None):
                         if _charset:
                             _s += _payload.decode(_charset)
                         else:
