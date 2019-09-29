@@ -116,7 +116,7 @@ class MyRedmineApi(object):
                     _s += t[0].decode(_charset)
                 else:
                     _s += t[0].decode()
-            elif type(tup[0]) is str:
+            elif type(t[0]) is str:
                 _s += t[0]
             else:
                 pass
@@ -142,7 +142,7 @@ class MyRedmineApi(object):
                         if _charset:
                             _s += _payload.decode(_charset)
                         else:
-                            _s += _charset.decode()
+                            _s += _payload.decode()
                     else:
                         _s += ""
 
