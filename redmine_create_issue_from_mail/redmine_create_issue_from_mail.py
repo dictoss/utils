@@ -143,8 +143,6 @@ class MyRedmineApi(object):
                             _s += _payload.decode(_charset)
                         else:
                             _s += _charset.decode()
-
-                        print("{} : {}".format(_charset, _s))
                     else:
                         _s += ""
 
