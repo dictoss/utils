@@ -5,8 +5,8 @@ table ip filter {
                 iif "lo" accept
                 ct state invalid drop
                 icmp type { destination-unreachable, router-advertisement, time-exceeded, parameter-problem } accept
-                tcp dport ssh accept
-                tcp dport { http, https } accept
+                tcp dport ssh ip saddr { 10.0.0.0/8, 172.16.0.0/16, 192.168.0.0/16 } accept
+                tcp dport { http, https } ip saddr { 0.0.0.0-255.255.255.255 } accept
         }
 
         chain FORWARD {
