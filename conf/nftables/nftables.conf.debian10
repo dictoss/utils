@@ -1,13 +1,10 @@
-table ip filter {
+table inet filter {
         chain input {
                 type filter hook input priority 0; policy drop;
                 ct state established,related accept
-                iif "lo" accept
                 ct state invalid drop
-                icmp type { echo-reply, destination-unreachable, echo-request, router-advertisement, time-exceeded, parameter-problem } accept
-                tcp dport ssh ip saddr { 10.0.0.0/8, 172.16.0.0/16, 192.168.0.0/16 } accept
-                udp dport ntp ip saddr { 10.0.0.0/8, 172.16.0.0/16, 192.168.0.0/16 } accept
-                tcp dport { http, https } ip saddr { 0.0.0.0-255.255.255.255 } accept
+                iif "lo" accept
+                ip protocol icmp icmp type { echo-reply, destination-unreachable, echo-request, router-advertisement, time-exceeded, parameter-problem } accept
         }
 
         chain forward {
@@ -18,19 +15,10 @@ table ip filter {
                 type filter hook output priority 0; policy accept;
         }
 }
-table ip6 filter {
+table ip filter {
         chain input {
-                type filter hook input priority 0; policy drop;
-                ct state established,related accept
-                ct state invalid drop
-                iif "lo" accept
-        }
-
-        chain forward {
-                type filter hook forward priority 0; policy accept;
-        }
-
-        chain output {
-                type filter hook output priority 0; policy accept;
+                tcp dport ssh ip saddr { 10.0.0.0/8, 172.16.0.0/16, 192.168.0.0/16 } accept
+                udp dport ntp ip saddr { 10.0.0.0/8, 172.16.0.0/16, 192.168.0.0/16 } accept
+                tcp dport { http, https } ip saddr { 0.0.0.0-255.255.255.255 } accept
         }
 }
