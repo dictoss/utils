@@ -1,6 +1,12 @@
 #!/bin/bash
 
+# remove inet rule
+echo "" > /etc/nftables.conf
+systemctl restart nftables
+
 # IPv4
+nft add table ip filter
+nft add chain ip filter input { type filter hook input priority 0 \; }
 nft add rule ip filter input ct state established,related accept
 nft add rule ip filter input ct state invalid drop
 nft add rule ip filter input iif lo accept
@@ -11,6 +17,8 @@ nft add rule ip filter input tcp dport { http, https } ip saddr { 0.0.0.0/0 } ac
 nft chain ip filter input { policy drop \; }
 
 # IPv6
+nft add table ip6 filter
+nft add chain ip6 filter input { type filter hook input priority 0 \; }
 nft add rule ip6 filter input ct state established,related accept
 nft add rule ip6 filter input ct state invalid drop
 nft add rule ip6 filter input iif lo accept

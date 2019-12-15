@@ -9,14 +9,6 @@ table ip filter {
                 udp dport ntp ip saddr { 10.0.0.0/8, 172.16.0.0/16, 192.168.0.0/16 } accept
                 tcp dport { http, https } ip saddr { 0.0.0.0-255.255.255.255 } accept
         }
-
-        chain forward {
-                type filter hook forward priority 0; policy accept;
-        }
-
-        chain output {
-                type filter hook output priority 0; policy accept;
-        }
 }
 table ip6 filter {
         chain input {
@@ -24,13 +16,5 @@ table ip6 filter {
                 ct state established,related accept
                 ct state invalid drop
                 iif "lo" accept
-        }
-
-        chain forward {
-                type filter hook forward priority 0; policy accept;
-        }
-
-        chain output {
-                type filter hook output priority 0; policy accept;
         }
 }
