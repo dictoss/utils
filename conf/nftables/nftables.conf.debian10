@@ -1,5 +1,5 @@
 table ip filter {
-        chain INPUT {
+        chain input {
                 type filter hook input priority 0; policy drop;
                 ct state established,related accept
                 iif "lo" accept
@@ -10,27 +10,27 @@ table ip filter {
                 tcp dport { http, https } ip saddr { 0.0.0.0-255.255.255.255 } accept
         }
 
-        chain FORWARD {
+        chain forward {
                 type filter hook forward priority 0; policy accept;
         }
 
-        chain OUTPUT {
+        chain output {
                 type filter hook output priority 0; policy accept;
         }
 }
 table ip6 filter {
-        chain INPUT {
+        chain input {
                 type filter hook input priority 0; policy drop;
                 ct state established,related accept
                 ct state invalid drop
                 iif "lo" accept
         }
 
-        chain FORWARD {
+        chain forward {
                 type filter hook forward priority 0; policy accept;
         }
 
-        chain OUTPUT {
+        chain output {
                 type filter hook output priority 0; policy accept;
         }
 }
