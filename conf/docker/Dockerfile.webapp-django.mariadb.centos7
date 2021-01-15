@@ -23,13 +23,9 @@ RUN yum clean all
 RUN yum install -y mariadb-server mariadb-devel
 RUN yum clean all
 
-# install tools
-RUN yum install -y iproute
-RUN yum clean all
-
 # setup user account for unittest.
 RUN /usr/bin/mysql_install_db --user=mysql
-RUN (/usr/bin/mysqld_safe &) && sleep 3s && ss -an && \
+RUN (/usr/bin/mysqld_safe &) && sleep 3s && \
      mysql --execute='CREATE DATABASE dbname_debug DEFAULT CHARACTER SET utf8' && \
      mysql --execute='GRANT ALL ON dbname_debug.* TO webapp@localhost IDENTIFIED BY "dbpassword"' && \
      mysql --execute='GRANT ALL ON test_dbname_debug.* TO webapp@localhost IDENTIFIED BY "dbpassword"'
