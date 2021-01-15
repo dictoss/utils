@@ -1,0 +1,38 @@
+#
+# Dockerfile for python web application. (use mariadb-server on centos-7 for unittest)
+#
+FROM centos:7
+
+RUN yum check-update || true
+
+# set locale
+RUN yum reinstall -y glibc-common && yum clean all
+RUN localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
+ENV LC_ALL ja_JP.UTF-8
+RUN yum clean all
+
+# for web application.
+RUN yum install -y python3 python3-devel python3-setuptools python3-pip gcc make
+# RUN yum install -y httpd
+# TODO: mod_wsgi for python3.6
+RUN yum clean all
+
+# install mariadb-server-5.5
+RUN yum install -y mariadb-server mariadb-devel
+RUN yum clean all
+
+# install tools
+RUN yum install -y iproute
+RUN yum clean all
+
+# setup user account for unittest.
+RUN /usr/bin/mysql_install_db --user=mysql
+RUN (/usr/bin/mysqld_safe &) && sleep 3s && ss -an && \
+     mysql --execute='CREATE DATABASE dbname_debug DEFAULT CHARACTER SET utf8' && \
+     mysql --execute='GRANT ALL ON dbname_debug.* TO webapp@localhost IDENTIFIED BY "dbpassword"' && \
+     mysql --execute='GRANT ALL ON test_dbname_debug.* TO webapp@localhost IDENTIFIED BY "dbpassword"'
+
+# execute mysql-server on start docker image.
+# CMD ["/usr/bin/mysqld_safe"]
