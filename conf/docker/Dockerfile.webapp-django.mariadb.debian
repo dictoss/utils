@@ -20,7 +20,7 @@ RUN apt-get install -y mariadb-server
 RUN apt-get clean
 
 # setup user account for unittest.
-RUN /usr/bin/mysql_install_db
+RUN /usr/bin/mysql_install_db --user=mysql
 RUN (/usr/bin/mysqld_safe &) && sleep 5s && \
      mysql --execute='CREATE DATABASE dbname_debug DEFAULT CHARACTER SET utf8mb4' && \
      mysql --execute='GRANT ALL ON dbname_debug.* TO webapp@localhost IDENTIFIED BY "dbpassword"' && \
