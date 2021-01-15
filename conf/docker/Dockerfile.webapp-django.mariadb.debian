@@ -1,0 +1,30 @@
+#
+# Dockerfile for python web application. (use mariadb-server on debian for unittest)
+#
+FROM debian:10
+
+RUN apt-get update
+
+# set locale
+RUN apt-get install -y locales git
+RUN apt-get clean
+RUN echo "ja_JP.UTF-8 UTF-8" > /etc/locale.gen
+RUN locale-gen
+
+# for web application.
+RUN apt-get install -y python3 python3-dev python3-setuptools python3-pip default-libmysqlclient-dev gcc make
+# RUN apt-get install -y apache2 libapache2-mod-wsgi-py3
+RUN apt-get clean
+
+RUN apt-get install -y mariadb-server
+RUN apt-get clean
+
+# setup user account for unittest.
+RUN /usr/bin/mysql_install_db
+RUN (/usr/bin/mysqld_safe &) && sleep 5s && \
+     mysql --execute='CREATE DATABASE dbname_debug DEFAULT CHARACTER SET utf8mb4' && \
+     mysql --execute='GRANT ALL ON dbname_debug.* TO webapp@localhost IDENTIFIED BY "dbpassword"' && \
+     mysql --execute='GRANT ALL ON test_dbname_debug.* TO webapp@localhost IDENTIFIED BY "dbpassword"'
+
+# execute mysql-server on start docker image.
+# CMD ["/usr/bin/mysqld_safe"]
