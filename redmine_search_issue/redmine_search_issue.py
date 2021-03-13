@@ -219,23 +219,29 @@ def main(redmine_url, redmine_token, redmine_project_name):
         print('EXCEPT: {}'.format(e), file=sys.stderr)
         return 1
 
-    # get issues.
-    _issue = _redmine.get_issue(60556, ['journals', 'changesets'])
-    print(_issue)
-    # print(_issue.__dict__)
-    print(_issue.created_on)
-    print(_issue.updated_on)
-    print(_issue.journals)
-    for j in _issue.journals:
-        # print(j.__dict__)
-        print('{}: {}'.format(j.id, j.notes))
-
     # search issues.
     _params = {'updated_on': '>=2020-05-01T00:00:00Z'}
     _issue_list = _redmine.filter_issue(_proj, _params)
     print(_issue_list)
+
     for i in _issue_list:
+        print('-----')
         print('{}: {}'.format(i.id, i.subject))
+
+        # get issues include journals.
+        _issue = _redmine.get_issue(i.id, ['journals', 'changesets'])
+        print('  {} : {}'.format(  _issue.created_on, _issue.updated_on))
+
+        if _issue.created_on == _issue.updated_on:
+            # new issue without journals
+            print('    new issue!')
+        else:
+            # print(_issue.__dict__)
+            # print(_issue.journals)
+
+            for j in _issue.journals:
+                # print(j.__dict__)
+                print('    {}: {} : {}'.format(j.id, j.created_on, j.notes))
 
     return 0
 
