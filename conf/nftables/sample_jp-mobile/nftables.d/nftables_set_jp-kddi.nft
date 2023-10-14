@@ -1,0 +1,39 @@
+#!/usr/sbin/nft -f
+#
+#  mobile operator address list.
+#
+#  jp (KDDI au)
+#    link: https://www.au.com/developer/android/kaihatsu/network/
+#    reference date: 2023-09-30
+#
+
+#
+# IPv4
+#
+define element_ip4_jp_kddi_servers = {
+  106.128.0.0/13,
+  106.146.0.0/17,
+  106.180.16.0/20,
+  106.180.32.0/20,
+  106.180.48.0/22,
+  111.86.140.128/27,
+  182.248.112.128/26,
+  182.249.0.0/16,
+  182.250.0.0/15,
+}
+
+add element ip filter allowed_iplist_sshd { $element_ip4_jp_kddi_servers }
+
+
+#
+# IPv6
+#
+define element_ip6_jp_kddi_servers = {
+  2001:268:9000::/36,
+  2001:268:9800::/40,
+  2001:268:9900::/40,
+  2001:268:9a00::/40,
+  2001:268:9b00::/40,
+}
+
+add element ip6 filter allowed_iplist_sshd { $element_ip6_jp_kddi_servers }
