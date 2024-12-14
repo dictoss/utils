@@ -4,15 +4,19 @@
 #
 #  jp (KDDI au)
 #    link: https://www.au.com/developer/android/kaihatsu/network/
-#    reference date: 2023-09-30
+#    reference date: 2024-09-21
 #
 
 #
 # IPv4
 #
 define element_ip4_jp_kddi_servers = {
+  27.81.0.0/16,
+  27.91.0.0/16,
+  59.132.0.0/16,
   106.128.0.0/13,
   106.146.0.0/17,
+  106.155.16.0/16,
   106.180.16.0/20,
   106.180.32.0/20,
   106.180.48.0/22,

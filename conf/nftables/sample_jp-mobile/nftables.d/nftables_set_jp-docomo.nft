@@ -4,7 +4,7 @@
 #
 #  jp (NTT docomo)
 #    link: https://www.docomo.ne.jp/service/developer/smart_phone/spmode/
-#    reference date: 2023-09-30
+#    reference date: 2024-09-21
 #
 
 #
@@ -17,6 +17,8 @@ define element_ip4_jp_docomo_servers = {
   1.75.0.0/16,
   1.78.0.0/16,
   1.79.0.0/16,
+  27.230.95.0/24,
+  27.230.96.0/23,
   49.96.0.0/16,
   49.97.0.0/16,
   49.98.0.0/16,
@@ -26,11 +28,8 @@ define element_ip4_jp_docomo_servers = {
   49.109.0.0/16,
   110.163.0.0/16,
   183.74.0.0/16,
-  27.230.95.0/24,
-  27.230.96.0/23,
   202.229.178.32/27,
-  49.109.0.0/16,
-  160.249.0.0/16,
+  160.249.0.0/16
 }
 
 add element ip filter allowed_iplist_sshd { $element_ip4_jp_docomo_servers }
